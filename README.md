@@ -93,13 +93,13 @@
 
 
 ```http
-  {
-  "language": "java",
-  "version": "15.0.2",
+ {
+  "language": "python",
+  "version": "3.10.0",
   "files": [
     {
-      "name": "Main.java",
-      "content": "System.out.println(\"Hello from Java!\");"
+      "name": "main.py",
+      "content": "print('Hello from Python')"
     }
   ]
 }

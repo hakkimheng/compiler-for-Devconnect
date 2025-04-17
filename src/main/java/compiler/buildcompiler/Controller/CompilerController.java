@@ -1,8 +1,11 @@
 package compiler.buildcompiler.Controller;
 
 
-import compiler.buildcompiler.Compiler.CodeExecutor;
-import compiler.buildcompiler.Model.CodeRequest;
+import compiler.buildcompiler.Model.PistonRequest;
+import compiler.buildcompiler.Model.Response.ApiResponse;
+import compiler.buildcompiler.Model.Response.PistonResponse;
+import compiler.buildcompiler.Service.PistonService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/compile")
+@RequiredArgsConstructor
 public class CompilerController {
+
+    private final PistonService pistonService;
+
     @PostMapping
-    public ResponseEntity<String> compileCode(@RequestBody CodeRequest codeRequest) {
-        try {
-            String output = CodeExecutor.runCode(codeRequest.getLanguage(), codeRequest.getCode());
-            return ResponseEntity.ok(output);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<PistonResponse>> compileWithPistonRequest(@RequestBody PistonRequest pistonRequest) {
+        PistonResponse output = pistonService.executeWithPistonRequest(pistonRequest);
+        ApiResponse<PistonResponse> apiResponse = ApiResponse.<PistonResponse>builder()
+                .status(HttpStatus.OK)
+                .message("Compilation successful")
+                .payload(output)
+                .build();
+        return ResponseEntity.ok(apiResponse);
     }
 }
